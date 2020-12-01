@@ -1,17 +1,18 @@
-package bomberman.entities.tiles;
+package bomberman.entities.tiles.items;
 
-import bomberman.Board;
 import bomberman.entities.Entity;
 import bomberman.entities.bombs.Flame;
+import bomberman.entities.tiles.Grass;
+import bomberman.entities.tiles.Tile;
 import bomberman.graphics.Sprite;
 import javafx.scene.canvas.GraphicsContext;
 
-public class Brick extends Tile {
+public class Item extends Tile {
     public boolean destroyed = false;
-    private Tile tileUnder;
-    public Brick(int tileX, int tileY, Tile tileUnder) {
-        super(tileX, tileY, Sprite.brick);
-        this.tileUnder = tileUnder;
+    private final Tile tileUnder;
+    public Item(int tileX, int tileY, Sprite sprite) {
+        super(tileX, tileY, sprite);
+        this.tileUnder = new Grass(tileX, tileY);
     }
 
 
@@ -27,9 +28,6 @@ public class Brick extends Tile {
 
     @Override
     public boolean collide(Entity e) {
-        if(e instanceof Flame) {
-            destroyed = true;
-        }
         return false;
     }
 

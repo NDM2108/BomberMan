@@ -20,7 +20,7 @@ public class Game {
     public static final int WIDTH = 32*31;
     public static final int HEIGHT = 32*13;
     public static final int TILE_SIZE = 32;
-    public static final int PLAYER_SPEED = 2;
+    public static int PLAYER_SPEED = 1;
     private Scene scene;
     private Board board;
     private Group root;

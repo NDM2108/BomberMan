@@ -8,6 +8,7 @@ import javafx.scene.shape.Rectangle;
 public abstract class Character extends Entity {
     protected Rectangle bound;
     protected boolean alive = true;
+    public boolean removed = false;
 
     public Character(int x, int y, Sprite sprite) {
         super(x, y, sprite);
@@ -22,4 +23,8 @@ public abstract class Character extends Entity {
     public abstract void move();
 
     public abstract void kill();
+
+    public void remove() {
+        removed = true;
+    }
 }

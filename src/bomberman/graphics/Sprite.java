@@ -36,19 +36,20 @@ public class Sprite {
 
     public static Sprite player_dead1 = new Sprite("sprites/player_dead1.png");
     public static Sprite player_dead2 = new Sprite("sprites/player_dead2.png");
-    public static Sprite player_dead3 = new Sprite("sprites/player_dead2.png");
+    public static Sprite player_dead3 = new Sprite("sprites/player_dead3.png");
 
     public static Sprite[] player_rights = {Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2};
     public static Sprite[] player_lefts = {Sprite.player_left, Sprite.player_left_1, Sprite.player_left_2};
     public static Sprite[] player_ups = {Sprite.player_up, Sprite.player_up_1, Sprite.player_up_2};
     public static Sprite[] player_downs = {Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2};
+    public static Sprite[] player_deads = {Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3};
 
     /*
     |--------------------------------------------------------------------------
     | Character
     |--------------------------------------------------------------------------
      */
-    //BALLOM
+    //BALLOOM
     public static Sprite balloom_left1 = new Sprite("sprites/balloom_left1.png");
     public static Sprite balloom_left2 = new Sprite("sprites/balloom_left2.png");
     public static Sprite balloom_left3 = new Sprite("sprites/balloom_left3.png");
@@ -59,17 +60,21 @@ public class Sprite {
 
     public static Sprite balloom_dead = new Sprite("sprites/balloom_dead.png");
 
-//    //ONEAL
-//    public static Sprite oneal_left1 = new Sprite(16, 11, 0, SpriteSheet.tiles, 16, 16);
-//    public static Sprite oneal_left2 = new Sprite(16, 11, 1, SpriteSheet.tiles, 16, 16);
-//    public static Sprite oneal_left3 = new Sprite(16, 11, 2, SpriteSheet.tiles, 16, 16);
-//
-//    public static Sprite oneal_right1 = new Sprite(16, 12, 0, SpriteSheet.tiles, 16, 16);
-//    public static Sprite oneal_right2 = new Sprite(16, 12, 1, SpriteSheet.tiles, 16, 16);
-//    public static Sprite oneal_right3 = new Sprite(16, 12, 2, SpriteSheet.tiles, 16, 16);
-//
-//    public static Sprite oneal_dead = new Sprite(16, 11, 3, SpriteSheet.tiles, 16, 16);
-//
+    public static Sprite[] balloom_lefts = {Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3};
+    public static Sprite[] balloom_rights = {Sprite.balloom_right1, Sprite.balloom_right2, Sprite.balloom_right3};
+    //ONEAL
+    public static Sprite oneal_left1 = new Sprite("sprites/oneal_left1.png");
+    public static Sprite oneal_left2 = new Sprite("sprites/oneal_left2.png");
+    public static Sprite oneal_left3 = new Sprite("sprites/oneal_left3.png");
+
+    public static Sprite oneal_right1 = new Sprite("sprites/oneal_right1.png");
+    public static Sprite oneal_right2 = new Sprite("sprites/oneal_right1.png");
+    public static Sprite oneal_right3 = new Sprite("sprites/oneal_right1.png");
+
+    public static Sprite oneal_dead = new Sprite("sprites/oneal_dead.png");
+    public static Sprite[] oneal_lefts = {Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3};
+    public static Sprite[] oneal_rights = {Sprite.oneal_right1, Sprite.oneal_right2, Sprite.oneal_right3};
+
 //    //Doll
 //    public static Sprite doll_left1 = new Sprite(16, 13, 0, SpriteSheet.tiles, 16, 16);
 //    public static Sprite doll_left2 = new Sprite(16, 13, 1, SpriteSheet.tiles, 16, 16);
@@ -165,9 +170,9 @@ public class Sprite {
 //    | Powerups
 //    |--------------------------------------------------------------------------
 //     */
-//    public static Sprite powerup_bombs = new Sprite(16, 0, 10, SpriteSheet.tiles, 16, 16);
-//    public static Sprite powerup_flames = new Sprite(16, 1, 10, SpriteSheet.tiles, 16, 16);
-//    public static Sprite powerup_speed = new Sprite(16, 2, 10, SpriteSheet.tiles, 16, 16);
+    public static Sprite powerup_bombs = new Sprite("sprites/powerup_bombs.png");
+    public static Sprite powerup_flames = new Sprite("sprites/powerup_flames.png");
+    public static Sprite powerup_speed = new Sprite("sprites/powerup_speed.png");
 //    public static Sprite powerup_wallpass = new Sprite(16, 3, 10, SpriteSheet.tiles, 16, 16);
 //    public static Sprite powerup_detonator = new Sprite(16, 4, 10, SpriteSheet.tiles, 16, 16);
 //    public static Sprite powerup_bombpass = new Sprite(16, 5, 10, SpriteSheet.tiles, 16, 16);

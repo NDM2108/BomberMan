@@ -55,10 +55,10 @@ public class Flame extends Entity {
                 return radius1;
             } else {
                 Entity e = board.getEntityAt(tileX1, tileY1);
-                if (e instanceof Character) {
-                    ++radius1;
-                }
-                else if (e instanceof Brick || e instanceof Bomb) {
+                Character c = board.getCharacterAt(tileX1, tileY1);
+                if(c != null) c.collide(this);
+                if (e instanceof Brick || e instanceof Bomb) {
+                    e.collide(this);
                     radius1++;
                     return radius1;
                 }

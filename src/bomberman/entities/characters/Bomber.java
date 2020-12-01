@@ -3,6 +3,7 @@ package bomberman.entities.characters;
 import bomberman.Game;
 import bomberman.entities.Entity;
 import bomberman.entities.bombs.Bomb;
+import bomberman.entities.bombs.Flame;
 import bomberman.entities.bombs.FlameSegment;
 import bomberman.graphics.Sprite;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,10 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bomber extends Character {
-    private int bombRate = 1;
     private final Game game;
     protected int animate = 0;
     protected List<Bomb> bombs = new ArrayList<>();
+    private int timeAfter = 120;
+    public static int numberOfBombs = 1;
+    private int getNumberOfBombsLeft = 1;
+    public static int speed = 1;
+
 
     public Bomber(Game game, int x, int y) {
         super(x * Game.TILE_SIZE, y * Game.TILE_SIZE, Sprite.player_right);
@@ -25,10 +30,15 @@ public class Bomber extends Character {
 
     @Override
     public void update() {
-        boolean temp = collide(game.getBoard().getEntityAt(x / Game.TILE_SIZE, y / Game.TILE_SIZE));
-        chooseSprite();
-        calculateMove();
-        detectPlaceBomb();
+        if(alive) {
+            boolean temp = collide(game.getBoard().getEntityAt(x / Game.TILE_SIZE, y / Game.TILE_SIZE));
+            chooseSprite();
+            calculateMove();
+            detectPlaceBomb();
+            getNumberOfBombsLeft = numberOfBombs - game.getBoard().getBombs().size();
+        } else {
+            afterKill();
+        }
     }
 
     @Override
@@ -38,7 +48,7 @@ public class Bomber extends Character {
 
     @Override
     public boolean collide(Entity e) {
-        if(e instanceof FlameSegment) {
+        if(e instanceof Flame) {
             kill();
         }
         return false;
@@ -57,7 +67,7 @@ public class Bomber extends Character {
             int tileY2 = (int) (y + bound.getHeight() - Game.PLAYER_SPEED) / Game.TILE_SIZE;
             if (game.getBoard().getEntityAt(tileX, tileY1).collide(this)
                     && game.getBoard().getEntityAt(tileX, tileY2).collide(this)) {
-                x += Game.PLAYER_SPEED;
+                x += speed;
             }
         }
         if (game.isGoLeft()) {
@@ -66,7 +76,7 @@ public class Bomber extends Character {
             int tileY2 = (int) (y + bound.getHeight() - Game.PLAYER_SPEED) / Game.TILE_SIZE;
             if (game.getBoard().getEntityAt(tileX, tileY1).collide(this)
                     && game.getBoard().getEntityAt(tileX, tileY2).collide(this)) {
-                x -= Game.PLAYER_SPEED;
+                x -= speed;
             }
         }
         if (game.isGoUp()) {
@@ -75,7 +85,7 @@ public class Bomber extends Character {
             int tileY = (int) (y - Game.PLAYER_SPEED) / Game.TILE_SIZE;
             if (game.getBoard().getEntityAt(tileX1, tileY).collide(this)
                     && game.getBoard().getEntityAt(tileX2, tileY).collide(this)) {
-                y -= Game.PLAYER_SPEED;
+                y -= speed;
             }
         }
         if (game.isGoDown()) {
@@ -84,24 +94,24 @@ public class Bomber extends Character {
             int tileY = (int) (y + bound.getHeight() + Game.PLAYER_SPEED - 1) / Game.TILE_SIZE;
             if (game.getBoard().getEntityAt(tileX1, tileY).collide(this)
                     && game.getBoard().getEntityAt(tileX2, tileY).collide(this)) {
-                y += Game.PLAYER_SPEED;
+                y += speed;
             }
         }
     }
 
     @Override
-    public void
-    kill() {
-        System.out.println("killed");
+    public void kill() {
+        System.out.println("bomber killed");
+        animate();
+        alive = false;
     }
 
     private void detectPlaceBomb() {
         if (game.isPlaceBomb()) {
             int tileX = (x + 11) / Game.TILE_SIZE;
             int tileY = (y + 16) / Game.TILE_SIZE;
-            if (game.getBoard().getBombAt(tileX, tileY) == null) {
+            if (game.getBoard().getBombAt(tileX, tileY) == null && getNumberOfBombsLeft > 0) {
                 game.getBoard().addBombs(new Bomb(game.getBoard(), tileX, tileY));
-
                 System.out.println("placeBomb " + tileX + " " + tileY);
             }
         }
@@ -111,28 +121,37 @@ public class Bomber extends Character {
         return false;
     }
 
+    public void afterKill() {
+        if(timeAfter > 0) {
+            timeAfter--;
+            sprite = Sprite.movingSprite(Sprite.player_deads, 119 - timeAfter, 40);
+        } else {
+            System.out.println("lose");
+        }
+    }
+
     public void chooseSprite() {
         if (game.isGoRight()) {
-            sprite = Sprite.movingSprite(Sprite.player_rights, animate, 10);
+            sprite = Sprite.movingSprite(Sprite.player_rights, animate, 20);
             animate();
         }
         if (game.isGoLeft()) {
-            sprite = Sprite.movingSprite(Sprite.player_lefts, animate, 10);
+            sprite = Sprite.movingSprite(Sprite.player_lefts, animate, 20);
             animate();
         }
         if (game.isGoUp()) {
-            sprite = Sprite.movingSprite(Sprite.player_ups, animate, 10);
+            sprite = Sprite.movingSprite(Sprite.player_ups, animate, 20);
             animate();
         }
         if (game.isGoDown()) {
-            sprite = Sprite.movingSprite(Sprite.player_downs, animate, 10);
+            sprite = Sprite.movingSprite(Sprite.player_downs, animate, 20);
             animate();
         }
     }
 
     public void animate() {
         animate++;
-        if (animate > 29) animate = animate % 29;
+        if (animate > 59) animate = animate % 59;
     }
 
     public List<Bomb> getBombs() {

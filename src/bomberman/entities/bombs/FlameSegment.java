@@ -54,9 +54,9 @@ public class FlameSegment extends Entity {
     }
 
     public boolean collide(Entity e) {
-        if(e instanceof Character) {
-            ((Character)e).kill();
-        }
+//        if(e instanceof Character) {
+//            ((Character)e).kill();
+//        }
         return true;
     }
 }

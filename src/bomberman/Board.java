@@ -3,12 +3,13 @@ package bomberman;
 import bomberman.entities.Entity;
 import bomberman.entities.bombs.Bomb;
 import bomberman.entities.bombs.FlameSegment;
+import bomberman.entities.characters.Balloom;
 import bomberman.entities.characters.Bomber;
 import bomberman.entities.characters.Character;
-import bomberman.entities.tiles.Brick;
-import bomberman.entities.tiles.Grass;
-import bomberman.entities.tiles.Tile;
-import bomberman.entities.tiles.Wall;
+import bomberman.entities.characters.Oneal;
+import bomberman.entities.tiles.*;
+import bomberman.entities.tiles.items.BombItem;
+import bomberman.entities.tiles.items.FlameItem;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.File;
@@ -39,11 +40,22 @@ public class Board {
         for(int i = 0; i < levelLoader.getHeight(); i++) {
             for(int j = 0; j < levelLoader.getWidth(); j++) {
                 if(board[i][j] == '#') tiles[i][j] = new Wall(j, i);
-                else if(board[i][j] == '*') tiles[i][j] = new Brick(j, i);
+                else if(board[i][j] == '*') tiles[i][j] = new Brick(j, i, new Grass(j, i));
+                else if(board[i][j] == 'x') tiles[i][j] = new Brick(j, i, new Portal(this,j, i));
+                else if(board[i][j] == 'b') tiles[i][j] = new Brick(j, i, new BombItem(j, i));
+                else if(board[i][j] == 'f') tiles[i][j] = new Brick(j, i, new FlameItem(j, i));
                 else if(board[i][j] == ' ') tiles[i][j] = new Grass(j, i);
                 else if(board[i][j] == 'p') {
                     tiles[i][j] = new Grass(j, i);
                     characters.add(new Bomber(game, j, i));
+                }
+                else if(board[i][j] == '1') {
+                    tiles[i][j] = new Grass(j, i);
+                    characters.add(new Balloom(this, j, i));
+                }
+                else if(board[i][j] == '2') {
+                    tiles[i][j] = new Grass(j, i);
+                    characters.add(new Oneal(this, j, i));
                 }
                 else tiles[i][j] = new Grass(j, i);
             }
@@ -62,8 +74,15 @@ public class Board {
         renderCharacter(g);
     }
 
+    public boolean detectNoEnemies() {
+        return characters.size() == 1 && characters.get(0) instanceof Bomber;
+    }
+
     public Bomber getBomber() {
-        return bomber;
+        for(Character character : characters) {
+            if(character instanceof Bomber) return (Bomber) character;
+        }
+        return null;
     }
 
     public Tile getTileAt(int tileX, int tileY) {
@@ -92,6 +111,16 @@ public class Board {
         return null;
     }
 
+    public Character getCharacterAt(int tileX, int tileY){
+        for(Character character : characters) {
+            if((character.getX() + 16)/ Game.TILE_SIZE == tileX
+                    && (character.getY() + 16) / Game.TILE_SIZE == tileY) {
+                return character;
+            }
+        }
+        return null;
+    }
+
     public Entity getEntityAt(int tileX, int tileY) {
         Entity temp = null;
 
@@ -109,7 +138,26 @@ public class Board {
     }
 
     protected void updateTiles() {
-
+        for(int i = 0; i < levelLoader.getHeight(); i++) {
+            for(int j = 0; j < levelLoader.getWidth(); j++) {
+                if(tiles[i][j] instanceof Brick) {
+                    if(((Brick) tiles[i][j]).destroyed) {
+                        tiles[i][j] = ((Brick) tiles[i][j]).getTileUnder();
+                    }
+                }
+                if(tiles[i][j] instanceof BombItem) {
+                    if(((BombItem) tiles[i][j]).destroyed) {
+                        tiles[i][j] = ((BombItem) tiles[i][j]).getTileUnder();
+                    }
+                }
+                if(tiles[i][j] instanceof FlameItem) {
+                    if(((FlameItem) tiles[i][j]).destroyed) {
+                        tiles[i][j] = ((FlameItem) tiles[i][j]).getTileUnder();
+                    }
+                }
+                tiles[i][j].update();
+            }
+        }
     }
 
     protected void updateBombs() {
@@ -119,9 +167,14 @@ public class Board {
         }
     }
 
+    public List<Bomb> getBombs() {
+        return bombs;
+    }
+
     protected void updateCharacter() {
-        for (Character character : characters) {
-            character.update();
+        for (int i = 0; i < characters.size(); i++) {
+            characters.get(i).update();
+            if(characters.get(i).removed) characters.remove(i);
         }
     }
 

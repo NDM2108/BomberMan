@@ -3,6 +3,8 @@ package bomberman.entities.bombs;
 import bomberman.Board;
 import bomberman.Game;
 import bomberman.entities.Entity;
+import bomberman.entities.characters.Bomber;
+import bomberman.entities.characters.Character;
 import bomberman.graphics.Sprite;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -51,20 +53,20 @@ public class Bomb extends Entity {
 
     @Override
     public boolean collide(Entity e) {
-        if(e instanceof Flame) {
-            explode();
-            return true;
-        }
+//        if(e instanceof Flame) {
+//            explode();
+//        }
+        if(e instanceof Bomber) return true;
         return false;
     }
 
     public void explode() {
         timeToExplode = 0;
 
-//        Character a = board.getMobAt(_x, _y);
-//        if(a != null)  {
-//            a.kill();
-//        }
+        Character a = board.getCharacterAt(x / Game.TILE_SIZE, y / Game.TILE_SIZE);
+        if(a != null)  {
+            a.kill();
+        }
         for (int i = 0; i < 4; i++) {
             flames[i] = new Flame(board, x / Game.TILE_SIZE, y / Game.TILE_SIZE, i, radius);
         }
