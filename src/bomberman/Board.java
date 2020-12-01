@@ -113,9 +113,11 @@ public class Board {
 
     public Character getCharacterAt(int tileX, int tileY){
         for(Character character : characters) {
-            if((character.getX() + 16)/ Game.TILE_SIZE == tileX
-                    && (character.getY() + 16) / Game.TILE_SIZE == tileY) {
-                return character;
+            if(!(character instanceof Bomber)) {
+                if (Math.abs(character.getX() - tileX * Game.TILE_SIZE) < 16
+                        && Math.abs(character.getY() - tileY * Game.TILE_SIZE) < 16) {
+                    return character;
+                }
             }
         }
         return null;

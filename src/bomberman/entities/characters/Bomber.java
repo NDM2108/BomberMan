@@ -14,12 +14,15 @@ import java.util.List;
 
 public class Bomber extends Character {
     private final Game game;
+    public static int speed = 1;
+    public static int lives = 3;
+    public static int numberOfBombs = 1;
     protected int animate = 0;
     protected List<Bomb> bombs = new ArrayList<>();
     private int timeAfter = 120;
-    public static int numberOfBombs = 1;
     private int getNumberOfBombsLeft = 1;
-    public static int speed = 1;
+    private boolean isSafe = false;
+    private int safeTime = 40;
 
 
     public Bomber(Game game, int x, int y) {
@@ -30,12 +33,17 @@ public class Bomber extends Character {
 
     @Override
     public void update() {
-        if(alive) {
+        if (alive) {
             boolean temp = collide(game.getBoard().getEntityAt(x / Game.TILE_SIZE, y / Game.TILE_SIZE));
             chooseSprite();
             calculateMove();
             detectPlaceBomb();
+            safe();
             getNumberOfBombsLeft = numberOfBombs - game.getBoard().getBombs().size();
+            Entity e = game.getBoard().getCharacterAt((x + 16) / Game.TILE_SIZE, (y + 16) / Game.TILE_SIZE);
+            if (e != null) {
+                e.collide(this);
+            }
         } else {
             afterKill();
         }
@@ -48,7 +56,7 @@ public class Bomber extends Character {
 
     @Override
     public boolean collide(Entity e) {
-        if(e instanceof Flame) {
+        if (e instanceof Flame) {
             kill();
         }
         return false;
@@ -101,9 +109,26 @@ public class Bomber extends Character {
 
     @Override
     public void kill() {
-        System.out.println("bomber killed");
-        animate();
-        alive = false;
+        if (!isSafe) {
+            if (lives > 0) {
+                lives--;
+                isSafe = true;
+            }
+            if (lives == 0) {
+                System.out.println("bomber killed");
+                alive = false;
+            }
+        }
+    }
+
+    private void safe() {
+        if (isSafe) {
+            safeTime--;
+            if (safeTime == 0) {
+                isSafe = false;
+                safeTime = 40;
+            }
+        }
     }
 
     private void detectPlaceBomb() {
@@ -122,7 +147,7 @@ public class Bomber extends Character {
     }
 
     public void afterKill() {
-        if(timeAfter > 0) {
+        if (timeAfter > 0) {
             timeAfter--;
             sprite = Sprite.movingSprite(Sprite.player_deads, 119 - timeAfter, 40);
         } else {

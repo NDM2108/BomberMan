@@ -9,7 +9,10 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -24,11 +27,14 @@ public class Game {
     private Scene scene;
     private Board board;
     private Group root;
+    private Pane pane, info;
+    private BorderPane borderPane;
     protected boolean goUp, goDown, goLeft, goRight, placeBomb;
 
     public Game() throws FileNotFoundException {
-        this.root = new Group();
-        scene = new Scene(root);
+        pane = new Pane();
+        info = new Pane();
+        borderPane = new BorderPane();
         board = new Board(this, 1);
     }
 
@@ -74,7 +80,12 @@ public class Game {
 
     public void createGame(Stage stage) {
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
-        root.getChildren().add(canvas);
+        Label label = new Label("Lives: " + Bomber.lives);
+        pane.getChildren().add(canvas);
+        info.getChildren().add(label);
+        borderPane.setBottom(pane);
+        borderPane.setTop(info);
+        scene = new Scene(borderPane, WIDTH, HEIGHT + 32);
 
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -105,6 +116,7 @@ public class Game {
 
         final long startNanoTime = System.nanoTime();
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
+            label.setText("Lives: " + Bomber.lives);
             graphicsContext.fillRect(0, 0, WIDTH, HEIGHT);
             board.update();
             board.render(graphicsContext);
