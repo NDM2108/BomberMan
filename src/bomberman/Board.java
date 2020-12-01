@@ -10,10 +10,14 @@ import bomberman.entities.characters.Oneal;
 import bomberman.entities.tiles.*;
 import bomberman.entities.tiles.items.BombItem;
 import bomberman.entities.tiles.items.FlameItem;
+import bomberman.entities.tiles.items.SpeedItem;
 import javafx.scene.canvas.GraphicsContext;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -27,9 +31,12 @@ public class Board {
     private Tile[][] tiles;
     protected List<Bomb> bombs = new ArrayList<>();
     public List<Character> characters = new ArrayList<>();
+    private int bomberPosX, bomberPosY;
+    public static boolean lose = false, win = false;
 
     public Board(Game game, int level) throws FileNotFoundException {
         this.game = game;
+        this.level = level;
         loadBoard();
     }
 
@@ -44,10 +51,13 @@ public class Board {
                 else if(board[i][j] == 'x') tiles[i][j] = new Brick(j, i, new Portal(this,j, i));
                 else if(board[i][j] == 'b') tiles[i][j] = new Brick(j, i, new BombItem(j, i));
                 else if(board[i][j] == 'f') tiles[i][j] = new Brick(j, i, new FlameItem(j, i));
+                else if(board[i][j] == 's') tiles[i][j] = new Brick(j, i, new SpeedItem(j, i));
                 else if(board[i][j] == ' ') tiles[i][j] = new Grass(j, i);
                 else if(board[i][j] == 'p') {
                     tiles[i][j] = new Grass(j, i);
                     characters.add(new Bomber(game, j, i));
+                    bomberPosX = j;
+                    bomberPosY = i;
                 }
                 else if(board[i][j] == '1') {
                     tiles[i][j] = new Grass(j, i);
@@ -63,9 +73,15 @@ public class Board {
     }
 
     protected void update() {
-        updateTiles();
-        updateBombs();
-        updateCharacter();
+        if(!Board.lose) {
+            if (Bomber.lives == 0) {
+                lose = true;
+                System.out.println("lose");
+            }
+            updateTiles();
+            updateBombs();
+            updateCharacter();
+        }
     }
 
     public void render(GraphicsContext g) {
@@ -120,6 +136,11 @@ public class Board {
                 }
             }
         }
+        Character character = getBomber();
+        if (Math.abs(character.getX() - tileX * Game.TILE_SIZE) < 16
+                && Math.abs(character.getY() - tileY * Game.TILE_SIZE) < 16) {
+            return character;
+        }
         return null;
     }
 
@@ -157,6 +178,11 @@ public class Board {
                         tiles[i][j] = ((FlameItem) tiles[i][j]).getTileUnder();
                     }
                 }
+                if(tiles[i][j] instanceof SpeedItem) {
+                    if(((SpeedItem) tiles[i][j]).destroyed) {
+                        tiles[i][j] = ((SpeedItem) tiles[i][j]).getTileUnder();
+                    }
+                }
                 tiles[i][j].update();
             }
         }
@@ -176,7 +202,14 @@ public class Board {
     protected void updateCharacter() {
         for (int i = 0; i < characters.size(); i++) {
             characters.get(i).update();
-            if(characters.get(i).removed) characters.remove(i);
+            if(characters.get(i) instanceof Bomber) {
+                if(characters.get(i).removed) {
+                    characters.remove(i);
+                    characters.add(new Bomber(game, bomberPosX, bomberPosY));
+                }
+            } else {
+                if(characters.get(i).removed) characters.remove(i);
+            }
         }
     }
 

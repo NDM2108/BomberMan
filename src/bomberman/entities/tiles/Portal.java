@@ -28,6 +28,7 @@ public class Portal extends Tile{
     public boolean collide(Entity e) {
         if(e instanceof Bomber && open) {
             System.out.println("win");
+            Board.win = true;
         }
         return false;
     }

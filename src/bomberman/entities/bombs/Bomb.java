@@ -2,11 +2,18 @@ package bomberman.entities.bombs;
 
 import bomberman.Board;
 import bomberman.Game;
+import bomberman.Sound;
 import bomberman.entities.Entity;
 import bomberman.entities.characters.Bomber;
 import bomberman.entities.characters.Character;
 import bomberman.graphics.Sprite;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.*;
 
 public class Bomb extends Entity {
     protected Board board;
@@ -16,7 +23,8 @@ public class Bomb extends Entity {
     protected boolean exploded = false;
     public boolean removed = false;
     protected Flame[] flames = new Flame[4];
-    protected int radius = 3;
+    public static int radius = 1;
+    protected boolean allowToPass = true;
 
     public Bomb(Board board, int tileX, int tileY) {
         super(tileX * Game.TILE_SIZE, tileY * Game.TILE_SIZE, Sprite.bomb);
@@ -25,14 +33,14 @@ public class Bomb extends Entity {
 
     @Override
     public void update() {
-        if(timeToExplode > 0) {
+        if (timeToExplode > 0) {
             timeToExplode--;
         } else {
-            if(!exploded)
-                explode();
+            if (!exploded)
+                 explode();
             else
                 updateFlames();
-            if(timeAfter > 0)
+            if (timeAfter > 0)
                 timeAfter--;
             else
                 remove();
@@ -56,15 +64,24 @@ public class Bomb extends Entity {
 //        if(e instanceof Flame) {
 //            explode();
 //        }
-        if(e instanceof Bomber) return true;
+        if (e instanceof Bomber) {
+            int diffX = e.getX() - this.x;
+            int diffY = e.getY() - this.y;
+            System.out.println("bb " + e.getY() + " " + y + " " + diffY);
+
+            if ((diffX < -16 || diffX >= 16) || (diffY >= 32 || diffY < -10)) {
+                allowToPass = false;
+            }
+            return allowToPass;
+        }
         return false;
     }
 
     public void explode() {
         timeToExplode = 0;
-
+        
         Character a = board.getCharacterAt(x / Game.TILE_SIZE, y / Game.TILE_SIZE);
-        if(a != null)  {
+        if (a != null) {
             a.kill();
         }
         for (int i = 0; i < 4; i++) {
@@ -75,7 +92,7 @@ public class Bomb extends Entity {
 
     public void updateFlames() {
         for (int i = 0; i < 4; i++) {
-            if(flames[i] != null) {
+            if (flames[i] != null) {
                 flames[i].update();
             }
         }
@@ -83,19 +100,19 @@ public class Bomb extends Entity {
 
     public void renderFlames(GraphicsContext g) {
         for (int i = 0; i < 4; i++) {
-            if(flames[i] != null) {
+            if (flames[i] != null) {
                 flames[i].render(g);
             }
         }
     }
 
     public FlameSegment getFlameSegmentAt(int tileX, int tileY) {
-        if(!exploded) return null;
+        if (!exploded) return null;
 
         for (int i = 0; i < flames.length; i++) {
-            if(flames[i] == null) return null;
+            if (flames[i] == null) return null;
             FlameSegment flameSegment = flames[i].flameSegmentAt(tileX, tileY);
-            if(flameSegment != null) {
+            if (flameSegment != null) {
                 return flameSegment;
             }
         }

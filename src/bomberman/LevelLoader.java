@@ -10,7 +10,8 @@ public class LevelLoader {
     private char[][] board;
 
     public LevelLoader(int level) throws FileNotFoundException {
-        File file = new File("res/levels/Level" + Integer.toString(1) + ".txt");
+        File file = new File("res/levels/Level" + Integer.toString(level) + ".txt");
+        System.out.println("res/levels/Level" + Integer.toString(level) + ".txt");
         Scanner scanner = new Scanner(file);
         height = scanner.nextInt();
         width = scanner.nextInt();

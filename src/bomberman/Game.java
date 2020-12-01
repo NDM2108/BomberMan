@@ -24,6 +24,7 @@ public class Game {
     public static final int HEIGHT = 32*13;
     public static final int TILE_SIZE = 32;
     public static int PLAYER_SPEED = 1;
+    private int level = 1;
     private Scene scene;
     private Board board;
     private Group root;
@@ -35,7 +36,7 @@ public class Game {
         pane = new Pane();
         info = new Pane();
         borderPane = new BorderPane();
-        board = new Board(this, 1);
+        board = new Board(this, level);
     }
 
     public boolean isGoUp() {
@@ -120,6 +121,15 @@ public class Game {
             graphicsContext.fillRect(0, 0, WIDTH, HEIGHT);
             board.update();
             board.render(graphicsContext);
+            if(Board.win) {
+                level++;
+                Board.win = false;
+                try {
+                    board = new Board(this, level);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         } ));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();

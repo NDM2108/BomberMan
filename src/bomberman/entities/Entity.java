@@ -3,6 +3,10 @@ package bomberman.entities;
 import bomberman.graphics.Sprite;
 import javafx.scene.canvas.GraphicsContext;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
+
 public abstract class Entity {
     protected int x, y;
     protected Sprite sprite;
@@ -13,7 +17,7 @@ public abstract class Entity {
         this.sprite = sprite;
     }
 
-    public abstract void update();
+    public abstract void update() throws UnsupportedAudioFileException, IOException, LineUnavailableException;
 
     public abstract void render(GraphicsContext g);
 

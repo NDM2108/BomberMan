@@ -21,8 +21,6 @@ public class Bomber extends Character {
     protected List<Bomb> bombs = new ArrayList<>();
     private int timeAfter = 120;
     private int getNumberOfBombsLeft = 1;
-    private boolean isSafe = false;
-    private int safeTime = 40;
 
 
     public Bomber(Game game, int x, int y) {
@@ -38,7 +36,6 @@ public class Bomber extends Character {
             chooseSprite();
             calculateMove();
             detectPlaceBomb();
-            safe();
             getNumberOfBombsLeft = numberOfBombs - game.getBoard().getBombs().size();
             Entity e = game.getBoard().getCharacterAt((x + 16) / Game.TILE_SIZE, (y + 16) / Game.TILE_SIZE);
             if (e != null) {
@@ -109,27 +106,12 @@ public class Bomber extends Character {
 
     @Override
     public void kill() {
-        if (!isSafe) {
-            if (lives > 0) {
-                lives--;
-                isSafe = true;
-            }
-            if (lives == 0) {
-                System.out.println("bomber killed");
-                alive = false;
-            }
+        if (lives > 0) {
+            lives--;
+            alive = false;
         }
     }
 
-    private void safe() {
-        if (isSafe) {
-            safeTime--;
-            if (safeTime == 0) {
-                isSafe = false;
-                safeTime = 40;
-            }
-        }
-    }
 
     private void detectPlaceBomb() {
         if (game.isPlaceBomb()) {
@@ -151,7 +133,7 @@ public class Bomber extends Character {
             timeAfter--;
             sprite = Sprite.movingSprite(Sprite.player_deads, 119 - timeAfter, 40);
         } else {
-            System.out.println("lose");
+            removed = true;
         }
     }
 
